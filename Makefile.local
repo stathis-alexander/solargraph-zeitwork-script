@@ -1,0 +1,3 @@
+.PHONY: solargraph
+solargraph:
+	./vscode-solargraph/generate_modules.rb "app/services" "app/models" "lib" "app/graphql" "app/helpers" "app/policies" "app/serializers" "app/workers"
