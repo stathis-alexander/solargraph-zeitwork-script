@@ -53,6 +53,7 @@ namespaces = folders.map do |folder|
   begin
     dig_filesystem_for_namespaces(folder)
   rescue Errno::ENOENT
+    puts "Folder #{folder} does not exist"
     next
   end
 end.compact.reduce({}) { |current_hash, new_hash| new_hash.merge(current_hash) }.sort.to_h
