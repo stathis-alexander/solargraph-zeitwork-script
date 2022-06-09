@@ -49,7 +49,13 @@ def write_header(file, file_name)
   file.write("# See https://github.com/castwide/vscode-solargraph/issues/200. \n\n")
 end
 
-namespaces = folders.map { |folder| dig_filesystem_for_namespaces(folder) }.reduce({}) { |current_hash, new_hash| new_hash.merge(current_hash) }.sort.to_h
+namespaces = folders.map do |folder|
+  begin
+    dig_filesystem_for_namespaces(folder)
+  rescue Errno::ENOENT
+    next
+  end
+end.compact.reduce({}) { |current_hash, new_hash| new_hash.merge(current_hash) }.sort.to_h
 file_name = "vscode-solargraph/namespaces.rb"
 File.open(file_name, "w") do |file|
   write_header(file, file_name)
