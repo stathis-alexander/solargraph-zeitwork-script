@@ -49,26 +49,25 @@ def write_header(file, file_name)
   file.write("# See https://github.com/castwide/vscode-solargraph/issues/200. \n\n")
 end
 
-namespaces = folders.map do |folder|
-  begin
-    dig_filesystem_for_namespaces(folder)
-  rescue Errno::ENOENT
-    puts "Folder #{folder} does not exist"
-    next
-  end
-end.compact.reduce({}) { |current_hash, new_hash| new_hash.merge(current_hash) }.sort.to_h
-file_name = "vscode-solargraph/namespaces.rb"
-File.open(file_name, "w") do |file|
-  write_header(file, file_name)
-  dfs(namespaces, 0, file)
-end
+VSCODE_FOLDER = "vscode-solargraph".freeze
 
-# code to write namespaces in each folder
-# folders.each do |folder|
-#   file_name = "#{folder}/solargraph_namespaces.rb"
-#   File.open(file_name, "w") do |file|
-#     write_header(file, file_name)
-#     namespaces = dig_filesystem_for_namespaces(folder).sort.to_h
-#     dfs(namespaces, 0, file);
-#   end
-# end
+folders.each do |folder|
+  folder_path_array = folder.split("/")
+  file_name = "#{folder_path_array.pop}.rb"
+
+  folder_path = File.join(VSCODE_FOLDER, *folder_path_array)
+  file_path = File.join(folder_path, file_name)
+
+  FileUtils.mkdir_p(folder_path) if !File.directory?(folder_path)
+
+  File.open(file_name, "w") do |file|
+    write_header(file, file_name)
+    begin
+      namespaces = dig_filesystem_for_namespaces(folder)
+    rescue Errno::ENOENT
+      puts "Folder #{folder} does not exist"
+      next
+    end
+    dfs(namespaces, 0, file);
+  end
+end
