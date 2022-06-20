@@ -60,7 +60,7 @@ folders.each do |folder|
 
   FileUtils.mkdir_p(folder_path) if !File.directory?(folder_path)
 
-  File.open(file_name, "w") do |file|
+  File.open(file_path, "w") do |file|
     write_header(file, file_name)
     begin
       namespaces = dig_filesystem_for_namespaces(folder)
