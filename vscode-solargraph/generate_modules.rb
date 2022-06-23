@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'active_support'
+require 'fileutils'
 
 folders = ARGV
 
